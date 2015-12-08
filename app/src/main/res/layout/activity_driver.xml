@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.templecs.ryding.activities.DriverActivity"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/loadingIcon"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Loading, please wait..."/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/driverContent">
+
+        <EditText
+            android:layout_marginTop="50px"
+            android:layout_width="300px"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/busid"
+            android:layout_gravity="center"
+            android:hint="Bus ID"/>
+        <Button
+            android:background="@drawable/green_btn"
+            style="@style/ButtonText"
+            android:layout_width="400px"
+            android:layout_height="150px"
+            android:text="Start"
+            android:id="@+id/button"
+            android:onClick="OpenView"
+            android:layout_gravity="center" />
+    </LinearLayout>
+</LinearLayout>

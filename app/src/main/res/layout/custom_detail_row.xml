@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="horizontal"
+    android:id="@+id/detail_row_element">
+
+    <ImageView
+        android:id="@+id/listDetailsIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/bus_icon_32"
+        />
+
+    <TextView
+        android:id="@+id/textViewDetailsBusNumber"
+        android:layout_gravity="center_vertical"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="63"/>
+
+    <TextView
+        android:id="@+id/textViewDetailsSeparator"
+        android:layout_gravity="center_vertical"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" | "/>
+
+    <TextView
+        android:id="@+id/textViewEAT"
+        android:layout_gravity="center_vertical"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arriving at Ambler in 25 minutes "/>
+
+</LinearLayout>

@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Ryding</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="title_activity_driver">Ryding Driver</string>
+    <string name="title_activity_passenger">Ryding Passger</string>
+    <string name="currentlyRunning">Active Buses</string>
+    <string name="title_activity_maps">Map</string>
+
+
+
+
+    <!-- Strings related to login -->
+    <string name="prompt_driver_id">Driver ID</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="invalid_driver_pin">Invalid pin</string>
+    <string name="invalid_password">Password is too short</string>
+    <string name="incorrect_password">Password is incorrect</string>
+    <string name="field_required">This field is required</string>
+</resources>
