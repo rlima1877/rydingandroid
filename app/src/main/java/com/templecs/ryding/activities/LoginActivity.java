@@ -22,22 +22,24 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.templecs.ryding.R;
 import com.templecs.ryding.model.Bus;
+import com.templecs.ryding.logintests.LoginPresenter;
+import com.templecs.ryding.logintests.LoginService;
+import com.templecs.ryding.logintests.LoginView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * Android login screen Activity
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, LoginView{
 
     private static final String DUMMY_PIN = "1234";
 
@@ -47,11 +49,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private AutoCompleteTextView driverPinTextView;
     private TextView signUpTextView;
     public ArrayList<Bus> busList;
+    LoginPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_login);
+
+        presenter = new LoginPresenter(this, new LoginService());
 
 
         Bundle bundle = getIntent().getBundleExtra("BusList");
@@ -72,6 +77,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 initLogin();
+                presenter.onLoginClicked();
+
+
             }
         });
 
@@ -150,10 +158,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
-    private boolean isPasswordValid(String password) {
-        //add your own logic
-        return password.length() > 4;
-    }
 
     /**
      * Shows the progress UI and hides the login form.
@@ -218,21 +222,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cursor.moveToNext();
         }
 
-        addDriverIDsToAutoComplete(driverIDs);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addDriverIDsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        driverPinTextView.setAdapter(adapter);
     }
 
 
@@ -305,4 +298,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+
+    @Override
+    public String getPinNumber() {
+        return driverPinTextView.getText().toString();
+    }
+
+    @Override
+    public void showPinNumberError(int resId) {
+        driverPinTextView.setError(getString(resId));
+    }
+
+    @Override
+    public void startDriverActivity() {
+        startActivity(new Intent(this, DriverActivity.class));
+    }
+
+    @Override
+    public void showLoginError(int resId) {
+
+    }
+
+
+
 }

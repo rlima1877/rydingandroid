@@ -12,11 +12,10 @@
 
 
     <!-- Strings related to login -->
-    <string name="prompt_driver_id">Driver ID</string>
-    <string name="prompt_password">Password</string>
+    <string name="prompt_pin_empty">Please enter a pin</string>
     <string name="action_sign_in">Login</string>
+    <string name="number_required">Please enter a number</string>
     <string name="invalid_driver_pin">Invalid pin</string>
-    <string name="invalid_password">Password is too short</string>
-    <string name="incorrect_password">Password is incorrect</string>
     <string name="field_required">This field is required</string>
+    <string name="login_failed">Login Failed</string>
 </resources>
