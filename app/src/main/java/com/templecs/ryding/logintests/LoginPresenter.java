@@ -14,33 +14,59 @@ public class LoginPresenter {
         this.service = service;
     }
 
-    public void onLoginClicked() {
-
-
-        String pin = view.getPinNumber();
-
-        if (pin.isEmpty()) {
-            view.showPinNumberError(R.string.prompt_pin_empty);
-            return;
-        }
-        else if (!isDriverIDValid(pin)) {
-            view.showPinNumberError(R.string.number_required);
-            return;
-        }
-
-        boolean loginSucceeded = service.login(pin);
-        if (loginSucceeded) {
-            view.startDriverActivity();
-            return;
-        }
-        view.showLoginError(R.string.login_failed);
-    }
 
     private boolean isDriverIDValid(String driverID) {
         //add your own logic
         String regex = "[0-9]+";
-
         return driverID.matches(regex);
 
     }
+
+    public boolean checkPinFieldIsEmpty(LoginView view){
+
+        String pin = view.getPinNumber();
+
+        if (pin.isEmpty()) {
+            view.showLoginError(R.string.prompt_pin_empty);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean checkIfPinFieldContainsAnIntegerNumber(LoginView view){
+
+        String pin = view.getPinNumber();
+
+        if(!isDriverIDValid(pin)) {
+            view.showLoginError(R.string.number_required);
+            return false;
+        }
+
+        return true;
+    }
+    public boolean checkIfPinIsCorrect(LoginView view){
+        String pin = view.getPinNumber();
+
+
+        boolean loginSucceeded = service.login(pin);
+        if (loginSucceeded) {
+            return true;
+        }
+        else {
+            view.showLoginError(R.string.invalid_pin);
+            return false;
+        }
+    }
+    public boolean checkIfPinIsCorrect(String pin){
+
+        boolean loginSucceeded = service.login(pin);
+        if (loginSucceeded) {
+            return true;
+        }else{
+            view.showLoginError(R.string.invalid_pin);
+            return false;
+        }
+    }
+
 }

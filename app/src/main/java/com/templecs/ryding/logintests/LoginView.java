@@ -5,10 +5,5 @@ package com.templecs.ryding.logintests;
  */
 public interface LoginView {
     String getPinNumber();
-
-    void showPinNumberError(int resId);
-
-    void startDriverActivity();
-
     void showLoginError(int resId);
 }

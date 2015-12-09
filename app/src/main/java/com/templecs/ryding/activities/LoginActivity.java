@@ -17,20 +17,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.templecs.ryding.R;
-import com.templecs.ryding.model.Bus;
 import com.templecs.ryding.logintests.LoginPresenter;
 import com.templecs.ryding.logintests.LoginService;
 import com.templecs.ryding.logintests.LoginView;
+import com.templecs.ryding.model.Bus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,15 +41,14 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, LoginView{
 
-    private static final String DUMMY_PIN = "1234";
-
     private UserLoginTask userLoginTask = null;
     private View loginFormView;
     private View progressView;
     private AutoCompleteTextView driverPinTextView;
     private TextView signUpTextView;
-    public ArrayList<Bus> busList;
-    LoginPresenter presenter;
+    private ArrayList<Bus> busList;
+
+    private LoginPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_driver_login);
 
         presenter = new LoginPresenter(this, new LoginService());
-
 
         Bundle bundle = getIntent().getBundleExtra("BusList");
         if(bundle != null){
@@ -68,18 +66,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             busList = savedInstanceState.getParcelableArrayList("bus_data");
         }
 
-        driverPinTextView = (AutoCompleteTextView) findViewById(R.id.email);
+        driverPinTextView = (AutoCompleteTextView) findViewById(R.id.driverPin);
+        driverPinTextView.setFocusableInTouchMode(true);
+        driverPinTextView.requestFocus();
         loadAutoComplete();
 
-
-        Button loginButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 initLogin();
-                presenter.onLoginClicked();
-
-
             }
         });
 
@@ -91,14 +87,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         signUpTextView.setPaintFlags(signUpTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         Linkify.addLinks(signUpTextView, Linkify.ALL);
 
-        signUpTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("LoginActivity", "Sign Up Activity activated.");
-                // this is where you should start the signup Activity
-                // LoginActivity.this.startActivity(new Intent(LoginActivity.this, SignupActivity.class));
-            }
-        });
     }
 
     private void loadAutoComplete() {
@@ -110,52 +98,47 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Validate Login form and authenticate.
      */
     public void initLogin() {
+
+        String pin = driverPinTextView.getText().toString();
+
         if (userLoginTask != null) {
             return;
         }
-
         driverPinTextView.setError(null);
-
-        String driverPin = driverPinTextView.getText().toString();
-
-        Log.d("DRIVERPIN","Driver pin: " + driverPin);
 
         boolean cancelLogin = false;
         View focusView = null;
 
-
-        if (TextUtils.isEmpty(driverPin)) {
-            driverPinTextView.setError(getString(R.string.field_required));
+        if (presenter.checkPinFieldIsEmpty(this)) {
             focusView = driverPinTextView;
             cancelLogin = true;
-        } else if (!isDriverIDValid(driverPin)) {
-            driverPinTextView.setError(getString(R.string.invalid_driver_pin));
+            return;
+        }
+        else if (presenter.checkIfPinFieldContainsAnIntegerNumber(this)) {
             focusView = driverPinTextView;
             cancelLogin = true;
         }
-        else if(!driverPin.equals(DUMMY_PIN)){
-            driverPinTextView.setError(getString(R.string.invalid_driver_pin));
+        if(!(presenter.checkIfPinIsCorrect(pin)) ) {
+            Log.d("DEBUGG", "INSIDE ELSE IF incorrect pin " + pin);
             focusView = driverPinTextView;
             cancelLogin = true;
+            return;
         }
-
-        if (cancelLogin) {
-            // error in login
-            focusView.requestFocus();
-        } else {
-            // show progress spinner, and start background task to login
+        else{
+            Log.d("DEBUGG","INSIDE ELSE IF correct pin");
+            //if we reached this point we passed all the checks and we are ready to validate the pin
+            hideKeyBoard();
             showProgress(true);
-            userLoginTask = new UserLoginTask(driverPin,getApplicationContext());
+            userLoginTask = new UserLoginTask(pin,this);
             userLoginTask.execute((Void) null);
         }
+
+
     }
 
-    private boolean isDriverIDValid(String driverID) {
-        //add your own logic
-        String regex = "[0-9]+";
-
-        return driverID.matches(regex);
-
+    public void hideKeyBoard(){
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(driverPinTextView.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 
 
@@ -263,9 +246,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            //using a local dummy credentials store to authenticate
-            String dummyID = DUMMY_PIN;
-            if (dummyID.equals(driverPin)) {
+            if (presenter.checkIfPinIsCorrect(driverPin)) {
                 return true;
             } else {
                 return false;
@@ -287,7 +268,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             } else {
                 // login failure
-                driverPinTextView.setError(getString(R.string.invalid_driver_pin));
+                driverPinTextView.setError(getString(R.string.login_failed));
                 driverPinTextView.requestFocus();
             }
         }
@@ -305,20 +286,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return driverPinTextView.getText().toString();
     }
 
-    @Override
-    public void showPinNumberError(int resId) {
-        driverPinTextView.setError(getString(resId));
-    }
-
-    @Override
-    public void startDriverActivity() {
-        startActivity(new Intent(this, DriverActivity.class));
-    }
 
     @Override
     public void showLoginError(int resId) {
-
+        driverPinTextView.setError(getString(resId));
     }
+
 
 
 

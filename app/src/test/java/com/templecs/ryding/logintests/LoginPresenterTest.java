@@ -32,27 +32,33 @@ public class LoginPresenterTest {
     @Test
     public void shouldShowErrorMessageWhenPinNumberIsEmpty() throws Exception {
         when(view.getPinNumber()).thenReturn("");
-        presenter.onLoginClicked();
-
-        verify(view).showPinNumberError(R.string.prompt_pin_empty);
+        presenter.checkPinFieldIsEmpty(view);
+        verify(view).showLoginError(R.string.prompt_pin_empty);
     }
 
     @Test
-    public void shouldShowErrorMessageWhenPinNumberIsNotAnInteger() throws Exception {
+    public void shouldShowErrorMessageWhenPinNumberIsAString() throws Exception {
         when(view.getPinNumber()).thenReturn("this is not a number");
-        presenter.onLoginClicked();
+        presenter.checkIfPinFieldContainsAnIntegerNumber(view);
+        verify(view).showLoginError(R.string.number_required);
+    }
 
-        verify(view).showPinNumberError(R.string.number_required);
+    @Test
+    public void shouldShowErrorMessageWhenPinNumberIsADouble() throws Exception {
+        when(view.getPinNumber()).thenReturn("9.9");
+        presenter.checkIfPinFieldContainsAnIntegerNumber(view);
+        verify(view).showLoginError(R.string.number_required);
     }
 
 
     @Test
-    public void shouldStartMainActivityWhenPinNumberIsCorrect() throws Exception {
-        when(view.getPinNumber()).thenReturn("1234");
-        when(service.login("1234")).thenReturn(true);
-        presenter.onLoginClicked();
-
-        verify(view).startDriverActivity();
+    public void shouldShowErrorMessageWhenPinNumberIsIncorrect() throws Exception {
+        when(view.getPinNumber()).thenReturn("1654");
+        presenter.checkIfPinIsCorrect(view);
+        verify(view).showLoginError(R.string.invalid_pin);
     }
+
+
+
 
 }
