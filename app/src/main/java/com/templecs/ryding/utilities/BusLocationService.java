@@ -14,16 +14,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.templecs.ryding.model.Bus;
+import com.templecs.ryding.network.GetInputStream;
 
 public class BusLocationService implements Runnable {
 
-    Activity activity;
-    String myurl;
-    Bus bus = new Bus();
+    private Activity activity;
+    private String myurl;
+    private Bus bus = new Bus();
+    private GetInputStream getInputStream;
 
     public BusLocationService(Activity activity, String myurl) {
         this.activity = activity;
         this.myurl = myurl;
+        this.getInputStream = new GetInputStream(activity);
+
     }
 
     public Bus getBus() {
@@ -31,7 +35,7 @@ public class BusLocationService implements Runnable {
     }
     @Override
     public void run() {
-        if (hasInternetConnection()) {
+        if (getInputStream.hasInternetConnection()) {
             try {
                 bus = loadJSONFromNetwork(myurl);
             } catch (IOException e) {
@@ -54,7 +58,7 @@ public class BusLocationService implements Runnable {
         Bus entry = new Bus();
 
         try {
-            stream = downloadUrl(urlString);
+            stream = getInputStream.downloadUrl(urlString);
             entry = readJSON.readBusLocationJSON(stream);
         } finally {
             if (stream != null) {
@@ -63,29 +67,5 @@ public class BusLocationService implements Runnable {
         }
 
         return entry;
-    }
-
-    //Creating inputstream from url
-    private InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.connect();
-        return conn.getInputStream();
-    }
-
-    //Checking if there is internet connection
-    public boolean hasInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
-        if (networkInfo != null)
-            for (int i = 0; i < networkInfo.length; i++)
-                if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
-                }
-        return false;
     }
 }

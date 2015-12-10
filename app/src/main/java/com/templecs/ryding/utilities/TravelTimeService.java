@@ -15,16 +15,19 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.templecs.ryding.model.BusStop;
+import com.templecs.ryding.network.GetInputStream;
 
 public class TravelTimeService implements Runnable {
 
-    Activity activity;
-    String myurl;
-    ArrayList<BusStop> busStops;
+    private Activity activity;
+    private String myurl;
+    private ArrayList<BusStop> busStops;
+    private GetInputStream getInputStream;
 
     public TravelTimeService(Activity activity, String myurl) {
         this.activity = activity;
         this.myurl = myurl;
+        this.getInputStream = new GetInputStream(activity);
     }
 
     public ArrayList<BusStop> getTravelTime() {
@@ -33,7 +36,7 @@ public class TravelTimeService implements Runnable {
 
     @Override
     public void run() {
-        if (hasInternetConnection()) {
+        if (getInputStream.hasInternetConnection()) {
             try {
                 busStops = loadJSONFromNetwork(myurl);
             } catch (IOException e) {
@@ -56,7 +59,7 @@ public class TravelTimeService implements Runnable {
         ArrayList<BusStop> result = new ArrayList<BusStop>();
 
         try {
-            stream = downloadUrl(urlString);
+            stream = getInputStream.downloadUrl(urlString);
             result = readJSON.readTravelTimeJSON(stream);
         } finally {
             if (stream != null) {
@@ -65,29 +68,5 @@ public class TravelTimeService implements Runnable {
         }
 
         return result;
-    }
-
-    //Creating inputstream from url
-    private InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.connect();
-        return conn.getInputStream();
-    }
-
-    //Checking if there is internet connection
-    public boolean hasInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
-        if (networkInfo != null)
-            for (int i = 0; i < networkInfo.length; i++)
-                if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
-                }
-        return false;
     }
 }

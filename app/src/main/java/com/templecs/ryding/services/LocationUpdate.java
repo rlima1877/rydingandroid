@@ -1,5 +1,6 @@
 package com.templecs.ryding.services;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -65,7 +66,7 @@ public class LocationUpdate extends Service {
                 sendResult(latitude, longitude, null);
                 String url = "http://templecs.com/bus/setbuslocation?id=" + id + "&lat=" + latitude + "&lon=" + longitude;
 
-                UpdateBusLocationService updateBusLocationService = new UpdateBusLocationService(getApplicationContext(), url);
+                UpdateBusLocationService updateBusLocationService = new UpdateBusLocationService(url);
                 Thread threat = new Thread(updateBusLocationService);
                 threat.start();
                 try{

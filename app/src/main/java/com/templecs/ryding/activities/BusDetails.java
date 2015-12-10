@@ -27,7 +27,7 @@ public class BusDetails extends AppCompatActivity {
     private BusDetailsAdapter busDetailsAdapter;
     private Bus bus;
     private ArrayList<BusStop> busGeos;
-    private String url = "http://templecs.com/bus/gettraveltime?id=";
+    private String url;
     private LinearLayout busStopContent;
     private LinearLayout loadingIcon;
     private boolean ready;
@@ -37,7 +37,7 @@ public class BusDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bus_details);
         setupToolbar();
-
+        url = getResources().getString(R.string.GetTravelTime);
         ready = false;
         busStopContent = (LinearLayout)findViewById(R.id.busStopContent);
         busStopContent.setVisibility(View.GONE);

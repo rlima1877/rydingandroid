@@ -14,12 +14,10 @@ public class LoginPresenter {
         this.service = service;
     }
 
-
     private boolean isDriverIDValid(String driverID) {
         //add your own logic
         String regex = "[0-9]+";
         return driverID.matches(regex);
-
     }
 
     public boolean checkPinFieldIsEmpty(LoginView view){
@@ -68,5 +66,4 @@ public class LoginPresenter {
             return false;
         }
     }
-
 }

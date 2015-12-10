@@ -8,9 +8,6 @@
     <string name="currentlyRunning">Active Buses</string>
     <string name="title_activity_maps">Map</string>
 
-
-
-
     <!-- Strings related to login -->
     <string name="prompt_pin_empty">Please enter a pin</string>
     <string name="action_sign_in">Login</string>
@@ -18,4 +15,10 @@
     <string name="invalid_pin">Invalid pin</string>
     <string name="field_required">This field is required</string>
     <string name="login_failed">Login Failed</string>
+
+    <!-- Web Service URLs-->
+    <string name="GetTravelTime">http://templecs.com/bus/gettraveltime?id=</string>
+    <string name="GetAllBuses">http://templecs.com/bus/getallbuses</string>
+    <string name="GetBusLocation">"http://templecs.com/bus/getbuslocation?id="</string>
+    <string name="GetBusRoute">http://templecs.com/bus/getbusroute?id=</string>
 </resources>

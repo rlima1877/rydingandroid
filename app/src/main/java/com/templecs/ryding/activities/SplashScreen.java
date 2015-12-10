@@ -20,7 +20,7 @@ import com.templecs.ryding.utilities.ReadJSON;
 
 public class SplashScreen extends AppCompatActivity {
 
-    public static final String url = "http://templecs.com/bus/getallbuses";
+    public String url;
     private Thread timer;
 
     @Override
@@ -28,6 +28,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
+        url = getResources().getString(R.string.GetAllBuses);
         GetBusInformation task = new GetBusInformation();
         task.execute(this);
 
