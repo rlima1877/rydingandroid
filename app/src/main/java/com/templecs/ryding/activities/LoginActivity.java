@@ -132,15 +132,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             userLoginTask = new UserLoginTask(pin,this);
             userLoginTask.execute((Void) null);
         }
-
-
     }
 
     public void hideKeyBoard(){
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(driverPinTextView.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
-
 
     /**
      * Shows the progress UI and hides the login form.
@@ -178,7 +175,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
@@ -204,20 +200,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             driverIDs.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
         };
-
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
@@ -280,12 +273,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     @Override
     public String getPinNumber() {
         return driverPinTextView.getText().toString();
     }
-
 
     @Override
     public void showLoginError(int resId) {

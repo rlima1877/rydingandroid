@@ -15,16 +15,19 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.templecs.ryding.model.BusStop;
+import com.templecs.ryding.network.GetInputStream;
 
 public class BusStopService implements Runnable {
 
-    Activity activity;
-    String myurl;
-    ArrayList<BusStop> busStopList = new ArrayList<BusStop>();
+    private Activity activity;
+    private String myurl;
+    private ArrayList<BusStop> busStopList = new ArrayList<BusStop>();
+    private GetInputStream getInputStream;
 
     public BusStopService(Activity activity, String myurl) {
         this.activity = activity;
         this.myurl = myurl;
+        this.getInputStream = new GetInputStream(activity);
     }
 
     //Returning arraylist containing stock objects
@@ -34,7 +37,7 @@ public class BusStopService implements Runnable {
 
     @Override
     public void run() {
-        if (hasInternetConnection()) {
+        if (getInputStream.hasInternetConnection()) {
             try {
                 busStopList = loadJSONFromNetwork(myurl);
             } catch (IOException e) {
@@ -57,7 +60,7 @@ public class BusStopService implements Runnable {
         ArrayList<BusStop> entries = new ArrayList();
 
         try {
-            stream = downloadUrl(urlString);
+            stream = getInputStream.downloadUrl(urlString);
             entries = readJSON.readBusStopJSON(stream);
         } finally {
             if (stream != null) {
@@ -66,33 +69,5 @@ public class BusStopService implements Runnable {
         }
 
         return entries;
-    }
-
-    //Creating inputstream from url
-    private InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(50000 /* milliseconds */);
-        conn.setConnectTimeout(50000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        try{
-            conn.connect();
-        }catch(Exception e){
-            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-        return conn.getInputStream();
-    }
-
-    //Checking if there is internet connection
-    public boolean hasInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
-        if (networkInfo != null)
-            for (int i = 0; i < networkInfo.length; i++)
-                if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
-                }
-        return false;
     }
 }

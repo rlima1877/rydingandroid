@@ -40,14 +40,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private List<LatLng> points;
     //flag for which shuttleService to draw.
     private String shuttleService;
-    String urlCurrentLoc = "http://templecs.com/bus/getbuslocation?id=";
-    String urlCurrentBusStopsInfo = "http://templecs.com/bus/getbusroute?id=";
+    private String urlCurrentLoc;
+    private String urlCurrentBusStopsInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        urlCurrentLoc = getResources().getString(R.string.GetBusLocation);
+        urlCurrentBusStopsInfo = getResources().getString(R.string.GetBusRoute);
 
         //grab which route to draw for a particular case
         shuttleService = "owlloop";

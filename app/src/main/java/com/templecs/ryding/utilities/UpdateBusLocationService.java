@@ -1,9 +1,12 @@
 package com.templecs.ryding.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
+
+import com.templecs.ryding.network.GetInputStream;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -17,13 +20,13 @@ import java.net.URL;
  */
 public class UpdateBusLocationService implements Runnable {
 
-    Context context;
-    String myurl;
-    String result;
+    private String myurl;
+    private String result;
+    private GetInputStream getInputStream;
 
-    public UpdateBusLocationService(Context context, String myurl) {
+    public UpdateBusLocationService(String myurl) {
         this.myurl = myurl;
-        this.context = context;
+        this.getInputStream = new GetInputStream(null);
     }
 
     public String getResult() {
@@ -32,17 +35,12 @@ public class UpdateBusLocationService implements Runnable {
 
     @Override
     public void run() {
-        if (hasInternetConnection()) {
-            try {
-                result = loadJSONFromNetwork(myurl);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            }
-        }
-        else{
-            Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+        try {
+            result = loadJSONFromNetwork(myurl);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
         }
     }
 
@@ -53,38 +51,13 @@ public class UpdateBusLocationService implements Runnable {
         String str = "";
 
         try {
-            stream = downloadUrl(urlString);
+            stream = getInputStream.downloadUrl(urlString);
             str = readJSON.readBusLocationUpdateJSON(stream);
         } finally {
             if (stream != null) {
                 stream.close();
             }
         }
-
         return str;
-    }
-
-    //Creating inputstream from url
-    private InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.connect();
-        return conn.getInputStream();
-    }
-
-    //Checking if there is internet connection
-    public boolean hasInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
-        if (networkInfo != null)
-            for (int i = 0; i < networkInfo.length; i++)
-                if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
-                }
-        return false;
     }
 }

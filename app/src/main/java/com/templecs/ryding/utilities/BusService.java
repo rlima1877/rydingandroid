@@ -12,16 +12,19 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.templecs.ryding.model.Bus;
+import com.templecs.ryding.network.GetInputStream;
 
 public class BusService implements Runnable {
 
-    Activity activity;
-    String myurl;
-    ArrayList<Bus> busList = new ArrayList<Bus>();
+    private Activity activity;
+    private String myurl;
+    private ArrayList<Bus> busList = new ArrayList<Bus>();
+    private GetInputStream getInputStream;
 
     public BusService(Activity activity, String myurl) {
         this.activity = activity;
         this.myurl = myurl;
+        this.getInputStream = new GetInputStream(activity);
     }
 
     public ArrayList<Bus> getBusList() {
@@ -29,7 +32,7 @@ public class BusService implements Runnable {
     }
     @Override
     public void run() {
-        if (hasInternetConnection()) {
+        if (getInputStream.hasInternetConnection()) {
             try {
                 busList = loadJSONFromNetwork(myurl);
             } catch (IOException e) {
@@ -52,7 +55,7 @@ public class BusService implements Runnable {
         ArrayList<Bus> entries = new ArrayList();
 
         try {
-            stream = downloadUrl(urlString);
+            stream = getInputStream.downloadUrl(urlString);
             entries = readJSON.readBusJSON(stream);
         } finally {
             if (stream != null) {
@@ -61,29 +64,5 @@ public class BusService implements Runnable {
         }
 
         return entries;
-    }
-
-    //Creating inputstream from url
-    private InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(50000 /* milliseconds */);
-        conn.setConnectTimeout(50000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.connect();
-        return conn.getInputStream();
-    }
-
-    //Checking if there is internet connection
-    public boolean hasInternetConnection() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
-        if (networkInfo != null)
-            for (int i = 0; i < networkInfo.length; i++)
-                if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
-                }
-        return false;
     }
 }

@@ -17,8 +17,6 @@ import com.templecs.ryding.adapters.BusListAdapter;
 
 public class PassengerActivity extends AppCompatActivity {
     private BusListAdapter busListAdapter;
-
-    public static final String url = "http://templecs.com/bus/getallbuses";
     public ArrayList<Bus> busList;
 
     @Override

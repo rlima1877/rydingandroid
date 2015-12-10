@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
+import com.templecs.ryding.activities.LoginActivity;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,15 +50,10 @@ public class LoginPresenterTest {
         verify(view).showLoginError(R.string.number_required);
     }
 
-
     @Test
     public void shouldShowErrorMessageWhenPinNumberIsIncorrect() throws Exception {
         when(view.getPinNumber()).thenReturn("1654");
         presenter.checkIfPinIsCorrect(view);
         verify(view).showLoginError(R.string.invalid_pin);
     }
-
-
-
-
 }
