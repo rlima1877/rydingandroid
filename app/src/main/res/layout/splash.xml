@@ -3,6 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Version 1.2"
+        android:id="@+id/revision"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="525dp"
+        android:textStyle="italic" />
 </LinearLayout>
